@@ -87,9 +87,9 @@ type AutoNAT struct {
 	// throttlePeerDuration is the duration to wait before making another dial request to the
 	// same server.
 	throttlePeerDuration time.Duration
-	// allowPrivateAddrs enables using private and localhost addresses for reachability checks.
+	// AllowPrivateAddrs enables using private and localhost addresses for reachability checks.
 	// This is only useful for testing.
-	allowPrivateAddrs bool
+	AllowPrivateAddrs bool
 }
 
 // New returns a new AutoNAT instance.
@@ -109,7 +109,7 @@ func New(dialerHost host.Host, opts ...AutoNATOption) (*AutoNAT, error) {
 		cancel:               cancel,
 		srv:                  newServer(dialerHost, s),
 		cli:                  newClient(s),
-		allowPrivateAddrs:    s.allowPrivateAddrs,
+		AllowPrivateAddrs:    s.AllowPrivateAddrs,
 		peers:                newPeersMap(),
 		throttlePeer:         make(map[peer.ID]time.Time),
 		throttlePeerDuration: s.throttlePeerDuration,
@@ -180,7 +180,7 @@ func (an *AutoNAT) Close() {
 // GetReachability makes a single dial request for checking reachability for requested addresses
 func (an *AutoNAT) GetReachability(ctx context.Context, reqs []Request) (Result, error) {
 	var filteredReqs []Request
-	if !an.allowPrivateAddrs {
+	if !an.AllowPrivateAddrs {
 		filteredReqs = make([]Request, 0, len(reqs))
 		for _, r := range reqs {
 			if manet.IsPublicAddr(r.Addr) {

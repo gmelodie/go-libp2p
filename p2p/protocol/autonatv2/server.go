@@ -56,7 +56,7 @@ type server struct {
 
 	// for tests
 	now               func() time.Time
-	allowPrivateAddrs bool
+	AllowPrivateAddrs bool
 }
 
 func newServer(dialer host.Host, s *autoNATSettings) *server {
@@ -64,7 +64,7 @@ func newServer(dialer host.Host, s *autoNATSettings) *server {
 		dialerHost:                           dialer,
 		dialDataRequestPolicy:                s.dataRequestPolicy,
 		amplificatonAttackPreventionDialWait: s.amplificatonAttackPreventionDialWait,
-		allowPrivateAddrs:                    s.allowPrivateAddrs,
+		AllowPrivateAddrs:                    s.AllowPrivateAddrs,
 		limiter: &rateLimiter{
 			RPM:                          s.serverRPM,
 			PerPeerRPM:                   s.serverPerPeerRPM,
@@ -196,7 +196,7 @@ func (as *server) serveDialRequest(s network.Stream) EventDialRequestCompleted {
 		if err != nil {
 			continue
 		}
-		if !as.allowPrivateAddrs && !manet.IsPublicAddr(a) {
+		if !as.AllowPrivateAddrs && !manet.IsPublicAddr(a) {
 			continue
 		}
 		if !as.dialerHost.Network().CanDial(p, a) {
